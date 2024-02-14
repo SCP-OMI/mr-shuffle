@@ -165,7 +165,23 @@ async function imgReverser(imageSrcUrl: string, squareSideLength = 200, stringSe
 
 
 Deno.serve(async (req) => {
-  const body = await req.json();
+  if (req.method !== 'POST') {
+    return new Response(
+      "Bad request: Only POST method is allowed",
+      { status: 400 },
+    )
+  }
+
+  let body;
+  try {
+    body = await req.json();
+  } catch (error) {
+    return new Response(
+      "Bad request: request body is not valid JSON",
+      { status: 400 },
+    )
+  }
+
   const imgURL = body.imgURL;
 
   if (!imgURL) {
